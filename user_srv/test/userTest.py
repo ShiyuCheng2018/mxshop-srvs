@@ -1,4 +1,5 @@
 import grpc
+from loguru import logger
 
 from user_srv.proto import user_pb2_grpc, user_pb2
 
@@ -11,7 +12,7 @@ class UserTest:
 
     def user_list(self):
         response: user_pb2.UserListResponse = self.stub.GetUserList(user_pb2.PageInfo())
-        print(f"[user_list] total users: {response.total}")
+        logger.info(f"[user_list] total users: {response.total}")
         for user in response.data:
             print(user)
 
