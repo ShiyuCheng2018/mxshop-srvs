@@ -16,7 +16,7 @@ class UserServicer(user_pb2_grpc.UserServicer):
         if request.size:
             per_page_nums = request.size
         if request.page:
-            start = per_page_nums * (page - 1)
+            start = per_page_nums * (request.page - 1)
 
         users = users.limit(per_page_nums).offset(start)
 
