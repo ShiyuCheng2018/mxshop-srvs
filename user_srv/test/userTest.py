@@ -16,6 +16,14 @@ class UserTest:
         for user in response.data:
             print(user)
 
+    def get_user_by_id(self, id):
+        response: user_pb2.UserInfoResponse = self.stub.GetUserById(user_pb2.IdRequest(id))
+        logger.info(f"[user info] {response}")
+
+    def get_user_by_mobile(self, mobile):
+        response: user_pb2.UserInfoResponse = self.stub.GetUserByMobile(user_pb2.MobileRequest(mobile))
+        logger.info(f"[user info] {response}")
+
 
 if __name__ == "__main__":
     user = UserTest()
