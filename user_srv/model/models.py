@@ -21,6 +21,7 @@ class User(BaseModel):
 
     mobile = CharField(max_length=11, index=True, unique=True, verbose_name="phone mobile")
     password = CharField(max_length=200, verbose_name="password")
+    name = CharField(max_length=20, null=False, verbose_name="name")
     nick_name = CharField(max_length=20, null=True, verbose_name="username | nick_name")
     profile_img_url = CharField(max_length=200, null=True, verbose_name="profile img")
     birthday = DateField(null=True, verbose_name="birthday")

@@ -18,13 +18,22 @@ class UserTest:
 
     def get_user_by_id(self, id):
         response: user_pb2.UserInfoResponse = self.stub.GetUserById(user_pb2.IdRequest(id))
-        logger.info(f"[user info] {response}")
+        logger.info(f"[get_user_by_id] {response}")
 
     def get_user_by_mobile(self, mobile):
         response: user_pb2.UserInfoResponse = self.stub.GetUserByMobile(user_pb2.MobileRequest(mobile))
-        logger.info(f"[user info] {response}")
+        logger.info(f"[get_user_by_mobile] {response}")
+
+    def create_user(self, nick_name, mobile, password):
+        response: user_pb2.UserInfoResponse = self.stub.CreateUser(user_pb2.CreateUserInfo(
+            nickName=nick_name,
+            passWord=password,
+            Mobile=mobile
+        ))
+        logger.info(f"[create_user] {response}")
 
 
 if __name__ == "__main__":
     user = UserTest()
     user.user_list()
+    user.create_user("Stake_2020", "5203891140", "123456")

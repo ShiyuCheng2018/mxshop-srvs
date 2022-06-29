@@ -2,6 +2,7 @@ import time
 
 import grpc
 from loguru import logger
+from passlib.handlers.pbkdf2 import pbkdf2_sha256
 from peewee import DoesNotExist
 
 from user_srv.model.models import User
@@ -15,12 +16,10 @@ class UserServicer(user_pb2_grpc.UserServicer):
         user_info_response.id = user.id
         user_info_response.name = user.name
         user_info_response.mobile = user.mobile
-        user_info_response.gender = user.gender
-        user_info_response.birthday = user.birthday
         user_info_response.role = user.role
 
-        if user.nickname:
-            user_info_response.nickname = user.nickname
+        if user.nick_name:
+            user_info_response.nickname = user.nick_name
         if user.gender:
             user_info_response.gender = user.gender
         if user.birthday:
@@ -61,10 +60,27 @@ class UserServicer(user_pb2_grpc.UserServicer):
     @logger.catch
     def GetUserByMobile(self, request: user_pb2.MobileRequest, context):
         try:
-            user = User.get(User.mobile == request.mobile)
+            user = User.get(User.mobile == request.Mobile)
             return self.convert_user_to_rsp(user)
 
         except DoesNotExist as e:
             context.set_code(grpc.StatusCode.NOT_FOUND)
             context.set_details("User not found.")
             return user_pb2.UserInfoResponse()
+
+    @logger.catch
+    def CreateUser(self, request: user_pb2.CreateUserInfo, context):
+        try:
+            user = User.get(User.mobile == request.Mobile)
+            context.set_code(grpc.StatusCode.ALREADY_EXISTS)
+            context.set_details("User already exist.")
+        except DoesNotExist as e:
+            pass
+
+        user = User()
+        user.name = request.nickName
+        user.mobile = request.Mobile
+        user.password = pbkdf2_sha256.hash(request.passWord)
+        user.save()
+
+        return self.convert_user_to_rsp(user)
