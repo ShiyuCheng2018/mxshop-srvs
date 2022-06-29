@@ -32,8 +32,18 @@ class UserTest:
         ))
         logger.info(f"[create_user] {response}")
 
+    def update_user(self, id, nickname=None, gender=None, birthday=None):
+        response: user_pb2.UpdateUserInfo = self.stub.UpdateUser(user_pb2.UpdateUserInfo(
+            id=id,
+            nickname=nickname,
+            gender=gender,
+            birthday=birthday
+        ))
+        logger.info(f"[update_user] {response}")
+
 
 if __name__ == "__main__":
     user = UserTest()
-    user.user_list()
-    user.create_user("Stake_2020", "5203891140", "123456")
+    # user.user_list()
+    # user.create_user("Stake_2020", "5203891140", "123456")
+    user.update_user(2, "Stark_2024")

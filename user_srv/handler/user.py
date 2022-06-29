@@ -1,6 +1,8 @@
 import time
+from datetime import date
 
 import grpc
+from google.protobuf import empty_pb2
 from loguru import logger
 from passlib.handlers.pbkdf2 import pbkdf2_sha256
 from peewee import DoesNotExist
@@ -84,3 +86,21 @@ class UserServicer(user_pb2_grpc.UserServicer):
         user.save()
 
         return self.convert_user_to_rsp(user)
+
+    @logger.catch
+    def UpdateUser(self, request: user_pb2.UpdateUserInfo, context):
+        try:
+            user = User.get(User.id == request.id)
+
+            if request.nickname:
+                user.nick_name = request.nickname
+            if request.gender:
+                user.gender = request.gender
+            if request.birthday:
+                user.birthday = date.fromtimestamp(request.birthday)
+
+            user.save()
+            return empty_pb2.Empty()
+        except DoesNotExist as e:
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            context.set_details("User not found.")
